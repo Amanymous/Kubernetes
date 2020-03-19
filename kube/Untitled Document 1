@@ -1,0 +1,173 @@
+Introduction To Kubernetes:
+
+commands:
+minikube start
+
+minikube status //host ma running ana zarori ha 
+
+kubectl cluster-info//ye apka ip address show karega
+
+kubectl get nodes //ye version or status or dosri cheezain batata ha
+
+kubectl describe node minikube//ye maksos node ki detail batati ha  or minikube node ka naam ha
+
+alias kgn="kubectl get nodes"//ya commad ko short karta ha
+
+kubectle get no//ye nodes ki jaga no likha ha kam axact wohi karta ha
+pod:ye raper ki tarah hota ha container nai hota ye docker container ko rap karta ha
+
+kind: Pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: contasiner1
+    image: amanmirza/helloword:latest
+    ports:
+    - containerPort: 80
+
+kubectl apply -f p.yaml//ye pod create karti ha
+kubectl get pod //jo pod create kiya ha aus ki decription bata ha ky sahi chal raha ha ya nai ager READY 0/1 TO YANI POD NAI CHAL RAHA AGER 1/1 TO CHAL RAHA HA
+kubectl get po //short form
+kubectl get pods myfirstpod -o yaml //ye bi wohi file bany ga or aus ma bhot si cheezain add kardega
+kubectl get pods myfirstpod -o yaml //ye json format ma dega detail
+kubectl describe pods p//ye pod ko describe karega or p file ka name ha 
+kubectl run firstpod  --image=amanmirza/helloworld:latest --port=80 --restart=Never //short way to create pod
+kubectl port-forword firstpod 9000:80//ya host change kiya ap is ko apny localhost:9000 chala kar check karsakty hain
+===pod with label===
+kind: Pod
+apiVersion: v1
+metadata:
+  name: label//label pod ka name ap kuch bi deskaty hain
+  labels:
+    type: backend
+    env: production
+spec:
+ containers:
+ - image: aamirpinger/helloworld:latest
+   name: container1
+   ports:
+   - containerPort: 80
+kubectl create -f label.yaml//pod create hoga is commad sy
+kubectl get pods   //check karna ha ky ye pod running condition ma ha ya nai
+
+-----------------------------------------------
+kubectl get nodes
+//ye name status or version batati ha
+kubectl describe node minikube
+
+alias kgn="kubectl get node"
+//ye alias command ki aberiviation create karta ha
+
+creating pod:
+nano mypod.yaml
+//spaces so much matter in yaml file
+spec ma hum container define karty hain 
+cat command yaml file ka data show karta ha
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: contasiner1
+    image: amanmirza/helloword:latest
+    ports:
+    - containerPort: 80
+
+kubectl create -f mypod.yaml
+
+kubectl get pod
+
+//ye result show karta ha jo pod ma likha ha wo sahi ha ya nai
+kubectl get pods
+
+kubectl get pods mypod -o yaml
+//yahan kubernetes khud pod bany ga or isma khud sy cheezain add bi karega
+
+kubectl get pods my pod -o json
+//yahan json format ma data dal dega
+
+kubectl describe pods mypod
+
+kubectl get pods myfirstpod -o yaml
+kubectl get pods myfirstpod -o json //json format ajy ga
+//ye pod ki sari detail show karega
+
+kubectl run mysecondpod --image=amanmirza/helloworld:latest --port=80 --restart=Never
+
+kubectl port-forward mysecondpod 6500:80
+//ye port ko change karta ha 
+
+labels:
+
+nano podlabels.yaml
+
+kubectl run anotherpodwithlabel --image=amanmirza/helloworld --port=80 --restart=Never --labels=type=frontend,env=development
+
+kubectl get pods -l type=frontend
+//ya wo label show karega jis frontend condition ha
+
+kubectl get pods -l type=frontend --show-labels
+
+kubectl get pods -l type!=frontend --show-labels
+//ye wo label show karega jis ma frontend na ho
+
+kubectl get pods -l type!=frontend,env=development
+
+
+kubectl get pods -l type!=frontend,env=production
+
+kubectl get pods -l type!=frontend,env=production --show-labels
+
+kubectl get pods -l env --show-labels
+
+kubectl get pods -l '!env' --show-labels
+
+kubectl get pods -l 'type in (frontend,backend)' --show-labels
+
+kubectl get pods -l 'type notin (frontend,backend)' --show-labels
+//ye wo pod show karega jis ki koi type nai ha
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
