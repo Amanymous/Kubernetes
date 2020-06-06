@@ -1,3 +1,6 @@
+kubectl delete all --all --all-namespaces
+//is command ma sahi sy kuch nai pta lekin ye sary pod delete kardeti ha
+
 Introduction To Kubernetes:
 
 commands:
