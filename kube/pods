@@ -111,6 +111,18 @@ nano podlabels.yaml
 
 kubectl run anotherpodwithlabel --image=amanmirza/helloworld --port=80 --restart=Never --labels=type=frontend,env=development
 
+kubectl get pods --show-labels
+//ye pod show kary ga label waly ya nai dekhy ga ky type frontend ha ya backend
+
+kubectl get pods -L env
+//yahn jis ma env araha hoga type wo show karega
+
+kubectl get pods -L env,type,run
+//jo pod ye sab cheezain consists karta hoga wo show hojy ga
+
+kubectl get pods -L city 
+//ye city ka column ban dega or ager aus ma koi cheez exisist karti hogi to wo bi show karega
+
 kubectl get pods -l type=frontend
 //ya wo label show karega jis frontend condition ha
 
@@ -135,41 +147,133 @@ kubectl get pods -l 'type in (frontend,backend)' --show-labels
 kubectl get pods -l 'type notin (frontend,backend)' --show-labels
 //ye wo pod show karega jis ki koi type nai ha
 
+kubectl label pods myfirstpod app=helloworld type=frontend
+kubectl get pods --show-labels
 
+kubectl label pods anotherpodwithlabel env=production --overwrite
+//ager ma overwrite nai likhuga to error dega
 
+kubectl get pods --show-labels
 
+kubectl label pod myfirstpod app-
+//-app likhny sy is discard kardega or us type ma jo save hoga wo delete hojy ga
 
+pods schediling with nodes
 
+nano podwithnodeselector.yaml
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podwithnodeselector
+spec:
+  nodeSelector:
+    typeofharddisk: ssd
+  containers:
+  - name: contasiner1
+    image: amanmirza/flag:latest
+    ports:
+    - containerPort: 80
+kubectl podwithnodeselector.yaml
 
+kubectl create -f podwithnodeselector.yaml
 
+kgp
+//ye pending state ma ayga ku ky typeofharddisk:ssd or ssd is system  mai nai ha
 
+kubectl get pods podwithnodeselector -o yaml
 
+kubectl label node minikube typeodharddisk=ssd
+//is command ko run karny ky bad ssd assignm hojy ga
+kgp
+//or phir ye runnig state ma ajyn ga
+kubectl get pods podwithnodeselector -o yaml
 
+Annotation
 
+nano podwithannotation.yaml
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: podwithannotation
+  annotations:
+    createdBy: "Aman Mirza"
+    email: aman.mirza9@yahoo.com
+spec:        
+  containers:
+  - name: container-new
+    image: aamirpinger/flag:latest
+    ports:
+    - containerPort: 80
+    
+kubectl create -f podwithannotation.yaml
+kgp
 
+kubectl get pods podwithannotation -o yaml
 
+//ager run hui wi command par annotation deni ho to auska tarika nechy ha
 
+kubectl annotate pod myfirstpod app-description="this is example of annotation in kubernetes"
 
+kubectl get pods -o myfirstpod -o yaml
 
+kubectl describe pod myfirstpod
 
+kubectl create namespace production
+kubectl get ns
+kubectl create ns development
+kubectl get namespace
 
+nano myfirstpod.yaml
 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myfirstpod
+spec:        
+  containers:
+  - name: container1
+    image: aamirpinger/helloworld:latest
+    ports:
+    - containerPort: 80
+    
+kubectl create -f myfirstpod.yaml
 
+kubectl get pods --namespace=production
+kgp
 
+kubectl run nsexample --image=aamirpinger/helloworld --port=80 --restart=Never --namespace=development
 
+kgp
+kubectl get pods -n production
+kubectl get pods -n development
 
+//to get all pod listing which u made or kubernetes made to get it follow below command
+kubectl get pods --all-namespaces
 
+//to delete a single pod follow delow
+kubectl delete pod myfirstpod
 
+kubectl get pods --all-namespaces
 
+kubectl delete pod myfirstpod --namespaces=production
+//ye production waly namespace ko delete kardega
 
+kubectl get pods --all-namespaces
 
+kubectl delete ns development
 
+kubectl get ns
 
+kubectl get po --show-labels
 
+kubectl delete pods -l type!=backend
 
+kubectl get po --show-labels
 
+kubectl delete pod --all
+//ye sary default namespace ky pod delete kardega
 
 
 
