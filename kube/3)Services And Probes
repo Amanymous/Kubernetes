@@ -1,0 +1,147 @@
+//kubernetes har pod ko ek ip address deta ha
+
+//clusterip internel communication ky liye hoti ha or ye static ip deta ha 
+or wo ausi machine py hota ha jis par kam chal raha ho
+
+//NodePort cluster ma jo node avialiable hoti ausi ko use kart aha
+or iski range 30000 to 32767 tk hoti ha
+
+//LoadBalancer kisi bi user ek fixed externel ip provide karta ha jo group ma hain
+
+//ExternelName  ye alias command ki trah hoti ha  bhot bary url ko ek short name 
+ma kardeta ha 
+
+Load Balancer service:
+kgn
+kubectl get rs
+nano mysvc.yaml
+
+kind: Service
+apiVersion:
+metadata: 
+  name: my-service
+spec:
+  ports:
+  - port: 8080
+    targetPort: 80
+  type: LoadBalancer
+  selector:
+    app: rsexample
+    
+fg
+kubectl create -f mysvc.yaml
+kubectl get services or svc
+minikube space ip
+//to check minikube ip address run browser to check or port number given ha wo
+dalna
+
+kubectl expose rs myrs --name=mysvc-lb --selector=app=rsexample --port=8000 --target-port=80 --type=LoadBalancer
+kubectl get svc
+// minikube ka ip address or port likh ky check karna hoga
+
+Liveness Probes
+nano lp-pod.yaml
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: lp-pod
+spec: 
+  containers:
+  - name: container1
+    image: aamirpinger/hi:latest
+    ports:
+    - containerPort: 80
+    livenessProbe:
+      exec:
+        command:
+        - ls
+        
+kubectl create -f lp-pod.yaml
+kgp 
+kubectl describe po lp-pod
+kgp
+kubectl describe po lp-pod
+
+nano lp-pod.yaml
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: lp-pod-new
+spec: 
+  containers:
+  - name: container1
+    image: aamirpinger/hi:latest
+    ports:
+    - containerPort: 80
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - abc.txt
+
+kubectl create -f lp-pod.yaml
+kgp
+kubectl describe po lp-pod-new
+
+kgp
+//abc.txt file nai to container bar bar restart hoga
+
+//follow livenessprob.png and livenessprob2.png for detail pod
+//livness prob ap ki restart karta 15 second bad or ager ap ny 15 sy zayda 
+dena hota ap ap deskty ho app run 60 second bad hoti ha 
+
+Readiness Prob
+follow readinessprob.png
+
+nano rp.yaml
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: rpod
+spec: 
+  containers:
+  - name: container-rp
+    image: aamirpinger/helloworld:latest
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        port: 80
+        path: /
+        
+kubect creat -f rp.yaml
+kgp
+//readiness prob time 10 seconds ka hotta ha
+kubectl describe pod rp
+
+nano rp.yaml
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: rpodnew
+spec: 
+  containers:
+  - name: container-rp
+    image: aamirpinger/helloworld:latest
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        port: 90
+        path: /
+
+kubectl create -f rp.yaml
+kgp
+kubectl describe pod rpodnew
+
+
+
+
+
+
+
+
