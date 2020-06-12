@@ -1,0 +1,82 @@
+nano vol.yaml
+
+kind:Pod
+apiVersion: v1
+metadata:
+  name: my-pod-with-vol
+ spec:
+   volumes:
+   - name: shared-dir
+     emptyDir: {}
+   containers:
+   - name: container-one
+     image: aamirpinger/logfile_nodejs
+     ports:
+     - containerPort: 8080
+     volumesMounts:
+     - name: shared-dir
+       mountPath: /data
+   - name: counter-two
+     image: nginx
+     ports: 
+     - containerPort: 80
+     volumeMounts:
+     - name: shared-dir
+       mountPath: /var/c-two
+       
+kubectl create -f vol.yaml
+kubectl get pods
+kubectl get po -w
+
+kubectl exec my-pod-with-vol -c container-one -it sh
+//isky zarye container ma jaty hain
+pwd
+cd
+cd data 
+ls
+time.txt
+cat time.txt
+echo "aman mirza" > myname.txt
+ls
+cat myname.txt
+exit
+kubectl exec my-pod-with-vol -c container-two -it sh
+pwd
+ls
+cd var
+ls
+cd c-two
+ls
+myname.txt time.txt
+cat myname.txt
+cat time.txt
+rm myname.txt
+echo "this is volume example"> msg.txt
+ls
+cat msg.txt
+exit
+kubectl exec my-pod-with-vol -c container-one -it sh
+cd
+ls
+cd data
+ls
+cat msg.txt
+exit
+
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
