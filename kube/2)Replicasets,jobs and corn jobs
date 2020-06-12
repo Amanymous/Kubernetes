@@ -1,3 +1,7 @@
+kubectl delete all --all --all-namespace
+
+kubectl delete all --all 
+//for cronjob delete command
 nano rs.yaml
 
 kind: ReplicaSet
@@ -96,6 +100,68 @@ kubectl get pods,rs
 kubectl scale rs myrs --replicas=2
 //for scale down
 kubectl get pods,rs --show-labels
+
+nano job.yaml
+
+
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: jobexample
+spec:
+  template:
+    spec:
+      containers:
+      - name: jobcontainer
+        image: docker/whalesay
+        command: ["cowsay","This is job resource example"]
+      restartPolicy: Never
+  backoffLimit: 4
+  activeDeadlineSeconds: 60
+
+kubectl create -f job.yaml
+kubectl get job
+kubectl get pods
+kubectl logs jobexample-b25z9
+//yahan restartpolicy ka matlab hum never likhly ya onfailour 
+//onfailour means ager application crash hogi to dobara start karega
+//or ager never likhy gy means application crash hony par wo pod dobara run nai
+//hoga balky dosra pod create karega or container ko restart nai karega
+//back oof limit means kitni dafa chalana ha ager job fail ho 
+//active dead line means jitna time diya ha aus ma kam hojy warna to connection khatam kardo
+
+cornJob
+nano cj.yaml
+
+kind: CronJob
+apiVersion: batch/v1beta1
+metadata:
+  name: cj
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: cjexample
+        spec:
+          containers:
+          - name: cjcontainer
+            image: docker/whalesay
+            command: ["cowsay","CronJob example"]
+          restartPolicy: Never
+kubectl create -f cj.yaml
+kubectl get cj,job,pod
+//cj means CronJob
+kubectl logs cj-1591941660-6jfrf
+kubectl delete cronjob cj
+kubectl get cj,job,pod
+//follow cronjob.png for schedule process
+           
+
+
+
 
 
         
