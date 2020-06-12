@@ -1,0 +1,113 @@
+nano rs.yaml
+
+kind: ReplicaSet
+apiVersion: apps/v1beta2
+metadata:
+  name: myrs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rsexample
+  template:
+    metadata:
+      labels:
+        app: rsexample
+    spec:
+      containers:
+      - name: rscontainer
+        image: aamirpinger/helloworld:latest
+        ports:
+        - containerPort: 80
+        
+cat rs.yaml
+kubectl create -f rs.yaml 
+kgp
+kubectl get rs
+kubectl get pods --show-labels
+kubectl get rs myrs -o yaml
+kubectl describe rs myrs
+kubectl get rs,pod
+
+kubectl delete pod myrs-m2brl
+//ye ek farzi name myrs-m2brl yahan kuch bi hosakta ha 3pod ma sy ek delete hojy ga
+
+kubectl get rs,pod
+kubectl get pods,replicasets
+kubectl get pods,replicasets --show-labels
+kubectl label pod myrs-sq5zz app=rsexampleNEW --overwrite
+kubectl get pods,replicasets --show-labels
+
+deleting pods and replicasets
+
+kubectl delete pods -l app=rsexample
+kubectl get pods,rs
+kubectl delete rs myrs
+kubectl get pods,rs --show-labels
+kubectl delete rs myrs --cascade=false
+kubectl get pods,rs --show-labels
+//replica set delete kardiya ha pods show hongy
+kubectl create -f rs.yaml
+kubectl get pods,rs --show-labels
+
+nano rs.yaml
+
+kind: ReplicaSet
+apiVersion: apps/v1beta2
+metadata:
+  name: myrs
+spec:
+  replicas: 3
+  selector:
+    matchExpressions:
+    - key:app
+      operator: In
+      values:
+      - rsexample
+  template:
+    metadata:
+      labels:
+        app: rsexample
+    spec:
+      containers:
+      - name: rscontainer
+        image: aamirpinger/helloworld:latest
+        ports:
+        - containerPort: 80
+        
+cat rs.yaml
+kubectl delete rs myrs --cascade=false
+//pod rahy gy balky replica set delete hojy ga
+
+kubectl create -f rs.yaml
+kubectl get pods,rs --show-labels
+
+//ager same pod replicaset kam ya zayada karnho t0
+kubectl edit pods rs myrs
+
+:wq!
+save quit and exit ya vim ki command ha
+
+kubectl get pods,rs --show-labels
+
+kubectl scale rs myrs --replicas=5
+//for scale up
+kubectl get pods,rs
+kubectl scale rs myrs --replicas=2
+//for scale down
+kubectl get pods,rs --show-labels
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
