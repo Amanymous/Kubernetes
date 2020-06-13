@@ -1,10 +1,10 @@
 nano vol.yaml
 
-kind:Pod
+kind: Pod
 apiVersion: v1
 metadata:
   name: my-pod-with-vol
- spec:
+spec:
    volumes:
    - name: shared-dir
      emptyDir: {}
@@ -13,7 +13,7 @@ metadata:
      image: aamirpinger/logfile_nodejs
      ports:
      - containerPort: 8080
-     volumesMounts:
+     volumeMounts:
      - name: shared-dir
        mountPath: /data
    - name: counter-two
@@ -31,7 +31,8 @@ kubectl get po -w
 kubectl exec my-pod-with-vol -c container-one -it sh
 //isky zarye container ma jaty hain
 pwd
-cd
+cd ..
+ls
 cd data 
 ls
 time.txt
@@ -56,17 +57,115 @@ ls
 cat msg.txt
 exit
 kubectl exec my-pod-with-vol -c container-one -it sh
-cd
+cd ..
 ls
 cd data
 ls
 cat msg.txt
 exit
 
+Persistance Volume
+//is ma 3 cheezain delete,reclaim and recycle
+
+nano pv.yaml
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv
+spec: 
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100M
+  hostPath:
+    path: /tmp/pvexample
+  persistentVolumeReclaimPolicy: Delete
+
+kubectl create -f pv.yaml
+kubectl get pv
+//pv ki max storage 100M ha
+nano pvc.yaml
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv
+spec: 
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100M
+  storageClassName: ""
+
+kubectl create -f pvc.yaml
+kubectl get pvc,pv
+
+nano pod.yaml
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-pv
+spec:
+  volumes:
+  - name: pv-vol
+    persistentVolumeClaim:
+      claimName: pvc
+  containers:
+  - name: container1
+    image: aamirpinger/logfile_nodejs
+    volumeMounts:
+    - name: pv-vol
+      mountPath: /data
      
-     
-     
-     
+kubectl create -f pod.yaml
+kubectl get po,pv,pvc
+
+kubectl exec pod-pv -it sh
+cd ..
+ls
+cd data
+cat time.txt
+echo "aman mirza" > mname.txt
+cat myname.txt
+exit
+
+minikube ssh
+pwd
+cd /
+pwd
+ls
+cd tmp
+ls
+cd pvexample
+cat myname.txt
+exit
+
+kubectl get pod,pv,pvc
+kubectl delete pod pod-pv
+kubectl get pod,pv,pvc
+minikube ssh
+cd /
+cd tmp
+ls
+cd pvexample
+cat time.txt
+exit
+
+kubectl get po,pv,pvc
+kubectl delete pvc pvc
+kubectl get po,pv,pvc
+
+minikube ssh
+cd /
+cd tmp
+ls
+cd pvexample
+ls
+cat time.txt
+
      
      
      
